@@ -87,7 +87,7 @@ and its jocabian h_prime is,
 
 ### performance criteria ###
 
-The estimator's parameters are properly adjusted to satisfy each of the performance criteria elements.
+The estimator's parameters are properly adjusted to satisfy each of the performance criteria for various scenarios in simulator.
 
 ### De-tune previous controller ###
 
