@@ -7,7 +7,7 @@ In this project, we will be developing the estimation portion of the controller 
 
 ## Estimator implementation ##
 
-The target state we aim to estimate/track for a 3D Quadrotor  are as follows:
+The target state we aim to estimate/track for a 3D Quadrotor are as follows:
 
 [x,y,z,x_dot, y_dot,z_dot, roll,pitch,yaw,p,q,r]
 
@@ -18,7 +18,7 @@ And the overall estimation architecture we used is as below,
 
 ### GPS X data and Accelerometer X data noise  ###
 
-Based on some sensor data record on a static quad, we are able to calculate the starndard deviation of the quad's sensors.
+Based on some sensor data record on a static quad, we are able to calculate the standard deviation of the quad's sensors.
 
 See [here](https://en.wikipedia.org/wiki/Standard_deviation) for more details on how std can be calcuated.
 
@@ -37,7 +37,7 @@ roll and pitch state are obtained by a complementary filter, which use measurmen
 
 ![complementary_filter](./imgs/complementary_filter.png)
 
-In particular, the p,q from gyroscopes are in body frame, we need to use rotation matrix to transfrom them roll_dot, and pitch_dot in world frame.
+In particular, the p,q from gyroscopes are in body frame, we need to use rotation matrix to transfrom them roll_dot, and pitch_dot into world frame.
 
 The integration scheme for obtaining roll and pitch is done by using quaternions.
 
