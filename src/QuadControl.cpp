@@ -154,50 +154,19 @@ V3F QuadControl::RollPitchControl(V3F accelCmd, Quaternion<float> attitude, floa
   /////////////////////////////// BEGIN SOLUTION //////////////////////////////
 
   
-//  float target_R13 = -CONSTRAIN(accelCmd[0] / (collThrustCmd / mass), -maxTiltAngle, maxTiltAngle);
-//  float target_R23 = -CONSTRAIN(accelCmd[1] / (collThrustCmd / mass), -maxTiltAngle, maxTiltAngle);
+  auto target_R13 = -CONSTRAIN(accelCmd[0] / (collThrustCmd / mass), -maxTiltAngle, maxTiltAngle);
+  auto target_R23 = -CONSTRAIN(accelCmd[1] / (collThrustCmd / mass), -maxTiltAngle, maxTiltAngle);
     
-//  if (collThrustCmd < 0)
-//  {
-//    target_R13 = 0;
-//    target_R23 = 0;
-//  }
-//  pqrCmd.x = (1 / R(2, 2))*(-R(1, 0) * kpBank*(R(0, 2) - target_R13) + R(0, 0) * kpBank*(R(1, 2) - target_R23));
-//  pqrCmd.y = (1 / R(2, 2))*(-R(1, 1) * kpBank*(R(0, 2) - target_R13) + R(0, 1) * kpBank*(R(1, 2) - target_R23));
-
-  if(collThrustCmd>0){
-       auto c = -collThrustCmd/mass;
-       auto b_x_c = accelCmd[0]/c;
-       auto b_y_c = accelCmd[1]/c;
-
-       auto &rot_mat = R;
-       auto b_x = rot_mat(0,2);
-       auto b_x_err = b_x_c - b_x;
-       auto b_x_commanded_dot = kpBank * b_x_err;
-
-       auto b_y = rot_mat(1,2);
-       auto b_y_err = b_y_c - b_y;
-       auto b_y_commanded_dot = kpBank * b_y_err;
+  if (collThrustCmd < 0)
+  {
+    target_R13 = 0;
+    target_R23 = 0;
+  }
+  pqrCmd.x = (1 / R(2, 2))*(-R(1, 0) * kpBank*(R(0, 2) - target_R13) + R(0, 0) * kpBank*(R(1, 2) - target_R23));
+  pqrCmd.y = (1 / R(2, 2))*(-R(1, 1) * kpBank*(R(0, 2) - target_R13) + R(0, 1) * kpBank*(R(1, 2) - target_R23));
 
 
-       auto R11 = rot_mat(0,0);
-       auto R12 = rot_mat(0,1);
-       auto R21 = rot_mat(1,0);
-       auto R22 = rot_mat(1,1);
-       auto R33 = rot_mat(2,2);
 
-
-       auto p_c = 1/R33 * (R21 * b_x_commanded_dot - R11 * b_y_commanded_dot );
-       auto q_c = 1/R33 * (R22 * b_x_commanded_dot - R12 * b_y_commanded_dot );
-
-       pqrCmd[0] = p_c;
-       pqrCmd[1] = q_c;
-
-
-     }else{
-       //command no rate.
-       return pqrCmd;
-   }
 
   //////////////////////////////// END SOLUTION ///////////////////////////////
   return pqrCmd;
@@ -371,13 +340,9 @@ float QuadControl::YawControl(float yawCmd, float yaw)
 //  }
 //  yawRateCmd = yawError * kpYaw;
 
-  if ( yawCmd > 0 ) {
-        yawCmd = fmodf(yawCmd, 2 * F_PI);
-      } else {
-        yawCmd = -fmodf(-yawCmd, 2 * F_PI);
-      }
 
     auto psi_err = yawCmd - yaw;
+    psi_err = fmodf(psi_err, F_PI*2.f);
     if ( psi_err > F_PI ) {
         psi_err -= 2 * F_PI;
       } else if ( psi_err < -F_PI ) {
